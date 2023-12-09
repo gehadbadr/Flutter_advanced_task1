@@ -89,11 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 finishAll[i] = false;
                               }
                             }
-                            print('my array ${finishAll}');
-                            print('index ${index}');
-                            print('isPlaying : ${isPlaying}');
-                            print('isfinished : ${isfinished}');
-                          });
+                        });
                           if (isPlaying == true) {
                             assetsAudioPlayer.open(
                               Audio(audio[index]),
