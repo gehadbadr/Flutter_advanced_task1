@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
-import 'package:velocity_x/velocity_x.dart'; 
+import 'package:velocity_x/velocity_x.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
     );
   }
 }
- 
+
 class MyHomePage extends StatefulWidget {
   MyHomePage({super.key});
   @override
@@ -26,7 +27,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool isPlaying = false;
-  int count = 0;
   bool isfinished = false;
   final assetsAudioPlayer = AssetsAudioPlayer();
   List audio = [
@@ -35,17 +35,16 @@ class _MyHomePageState extends State<MyHomePage> {
     "assets/audios/sample-12s.mp3"
   ];
 
-  List finishAll = [false, false, false];
-  
+  List finishAll = List.filled(3, false);
+
   void initState() {
     super.initState();
     assetsAudioPlayer.playlistAudioFinished.listen((Playing playing) {
       setState(() {
-         isfinished = false;
+        isfinished = false;
       });
     });
     assetsAudioPlayer.playlistFinished.listen((finished) {
-      //  print(finished.toString());
       if (finished) {
         setState(() {
           isfinished = true;
@@ -66,7 +65,11 @@ class _MyHomePageState extends State<MyHomePage> {
             child: ListView.separated(
                 itemBuilder: (context, index) {
                   return ListTile(
-                    title: 'Audio ${index+1}'.text.size(20).fontWeight(FontWeight.bold).make(),
+                    title: 'Audio ${index + 1}'
+                        .text
+                        .size(20)
+                        .fontWeight(FontWeight.bold)
+                        .make(),
                     trailing: IconButton(
                         onPressed: () {
                           setState(() {
@@ -74,6 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               isfinished = false;
                             }
                             isPlaying = !isPlaying;
+                            //Set isPlaying true when swap from an audio that doesn't have finished
                             for (var i = 0; i < finishAll.length; i++) {
                               if (index != i &&
                                   finishAll[i] == true &&
@@ -82,6 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 finishAll[i] = false;
                               }
                             }
+                            //Set selected audio true
                             for (var i = 0; i < finishAll.length; i++) {
                               if (index == i && isPlaying == true) {
                                 finishAll[index] = true;
@@ -89,7 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 finishAll[i] = false;
                               }
                             }
-                        });
+                          });
                           if (isPlaying == true) {
                             assetsAudioPlayer.open(
                               Audio(audio[index]),
@@ -100,16 +105,45 @@ class _MyHomePageState extends State<MyHomePage> {
                           }
                         },
                         icon: isfinished
-                                ? Icon(Icons.play_arrow,color: Color.fromARGB(255, 252, 252, 251)).box.roundedFull.color(Colors.blue).make()
-                                : finishAll[index]
-                                ? Icon(Icons.pause,color: Colors.blue,).box.roundedFull.color(Color.fromARGB(255, 228, 228, 227)).make()
-                                : Icon(Icons.play_arrow,color: Color.fromARGB(255, 252, 252, 251)).box.roundedFull.color(Colors.blue).make()),
-                  ).box.margin(EdgeInsets.all(4)).padding(EdgeInsets.all(8)).color(Color.fromARGB(255, 252, 252, 253)).border(color:Colors.blue, width :1.5,).rounded.shadowSm.make();
+                            ? Icon(Icons.play_arrow,
+                                    color: Color.fromARGB(255, 252, 252, 251))
+                                .box
+                                .roundedFull
+                                .color(Colors.blue)
+                                .make()
+                            : finishAll[index]
+                                ? Icon(
+                                    Icons.pause,
+                                    color: Colors.blue,
+                                  )
+                                    .box
+                                    .roundedFull
+                                    .color(Color.fromARGB(255, 228, 228, 227))
+                                    .make()
+                                : Icon(Icons.play_arrow,
+                                        color:
+                                            Color.fromARGB(255, 252, 252, 251))
+                                    .box
+                                    .roundedFull
+                                    .color(Colors.blue)
+                                    .make()),
+                  )
+                      .box
+                      .margin(EdgeInsets.all(4))
+                      .padding(EdgeInsets.all(8))
+                      .color(Color.fromARGB(255, 252, 252, 253))
+                      .border(
+                        color: Colors.blue,
+                        width: 1.5,
+                      )
+                      .rounded
+                      .shadowSm
+                      .make();
                 },
                 separatorBuilder: (context, index) {
                   return 10.heightBox;
                 },
-                itemCount: 3)),
+                itemCount: audio.length)),
       ),
     );
   }
